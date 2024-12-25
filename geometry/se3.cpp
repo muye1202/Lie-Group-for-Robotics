@@ -32,10 +32,12 @@ Eigen::Matrix4d SE3::ExpMap(Eigen::VectorXd eksi) {
   return T;
 }
 
+///////////// Constructors /////////////
 
 SE3::Pose::Pose(Eigen::Vector3d rot, Eigen::Vector3d trans) {
   rotation = SO3::Rotation(rot);
   translation = trans;
+  axis_angle = rot;
 
   Eigen::Matrix4d T;
   T.block(0,0,3,3) = rotation.GetMatrix();
@@ -51,6 +53,10 @@ SE3::Pose::Pose(Eigen::Matrix3d R, Eigen::Vector3d trans) {
   rotation = SO3::Rotation(R);
   translation = trans;
 
+  // Get axis-angle rot from R
+  Eigen::Vector3d rot_vec = SO3::LogMap(R);
+  axis_angle = rot_vec;
+
   Eigen::Matrix4d T;
   T.block(0,0,3,3) = R;
   T.block(0,3,3,1) = trans;
@@ -64,6 +70,10 @@ SE3::Pose::Pose(Eigen::Matrix3d R, Eigen::Vector3d trans) {
 SE3::Pose::Pose(SO3::Rotation R, Eigen::Vector3d trans) {
   rotation = R;
   translation = trans;
+
+  // Get axis-angle rot from R
+  Eigen::Vector3d rot_vec = SO3::LogMap(R.GetMatrix());
+  axis_angle = rot_vec;
 
   Eigen::Matrix4d T;
   T.block(0,0,3,3) = R.GetMatrix();
@@ -81,9 +91,14 @@ SE3::Pose::Pose(Eigen::Matrix4d target) {
   Eigen::Matrix3d sub_R = target.block(0, 0, 3, 3);
   rotation = SO3::Rotation(sub_R);
 
+  // Get axis-angle rot from R
+  Eigen::Vector3d rot_vec = SO3::LogMap(sub_R);
+  axis_angle = rot_vec;
+
   translation = target.block(0,3,3,1);
 }
 
+/////////////////////////////////////////
 
 SO3::Rotation SE3::Pose::GetRotation() {
   return rotation;
@@ -144,4 +159,67 @@ Eigen::MatrixXd SE3::Pose::adjoint_inv() {
   AdT_inv.block(3,3,3,3) = this->rotation.GetMatrix().transpose();
 
   return AdT_inv;
+}
+
+
+Eigen::MatrixXd SE3::leftJacobian(Eigen::VectorXd eksi) {
+
+  Eigen::Vector3d rot = eksi.block(3,1,3,1);
+  Eigen::Vector3d p = eksi.block(0,0,3,1);
+
+  // Get Jl block where Jl is Jacobian of SO(3)
+  Eigen::Matrix3d Jl = SO3::leftJacobian(rot);
+
+  Eigen::Matrix3d Q_left = SE3::leftQ(eksi);
+
+  Eigen::MatrixXd left_J(6,6);
+  left_J.setZero();
+
+  left_J.block(0,0,3,3) = Jl;
+  left_J.block(0,3,3,3) = Q_left;
+  left_J.block(3,3,3,3) = Jl;
+
+  return left_J;
+}
+
+
+Eigen::MatrixXd SE3::rightJacobian(Eigen::VectorXd eksi) {
+
+  return SE3::leftJacobian(-1*eksi);
+}
+
+
+// Formula (7.86b) in Barfoot's book
+Eigen::Matrix3d SE3::leftQ(Eigen::VectorXd eksi) {
+
+  Eigen::Vector3d rot = eksi.block(3,1,3,1);
+  Eigen::Vector3d p = eksi.block(0,0,3,1);
+
+  // rou^ matrix where rou is translation
+  Eigen::Matrix3d p_hat = SO3::skewSymmetric(p);
+
+  // scalar rotation angle
+  double phi = rot.norm();
+
+  // phi^ matrix where phi is axis-angle vector
+  Eigen::Matrix3d phi_hat = SO3::skewSymmetric(rot);
+
+  // 2nd term in (b)
+  Eigen::Matrix3d second_term = ((phi - std::sin(phi))/std::pow(phi, 3)) * 
+                                (phi_hat*p_hat + p_hat*phi_hat + phi_hat*p_hat*phi_hat);
+
+  Eigen::Matrix3d third_term = ((std::pow(phi,2) + 2*std::cos(phi) - 2) / (2*std::pow(phi, 4))) * 
+                               (phi_hat*phi_hat*p_hat + p_hat*phi_hat*phi_hat - 3*phi_hat*p_hat*phi_hat);
+
+  Eigen::Matrix3d fourth_term = ((2*phi-3*std::sin(phi)+phi*std::cos(phi)) / 2*std::pow(phi, 5)) * 
+                                (phi_hat*p_hat*phi_hat*phi_hat + phi_hat*phi_hat*p_hat*phi_hat);
+
+  return 0.5*phi_hat + second_term + third_term + fourth_term;
+}
+
+
+// Q_r = Q_l(-eksi) as in (7.86c)
+Eigen::Matrix3d SE3::rightQ(Eigen::VectorXd eksi) {
+  
+  return SE3::leftQ(-1*eksi);
 }

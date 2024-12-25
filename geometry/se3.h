@@ -26,6 +26,40 @@ namespace SE3
   Eigen::Matrix4d ExpMap(Eigen::VectorXd eksi);
 
 
+  /**
+   * @brief left and right Q block matrix as defined in
+   *        equation 7.86 in State Estimation for Robotics book.
+   * 
+   * @param eksi 6d vector containing rot and trans vector.
+   * 
+   * @return Ql and Qr - 6x6 matrices. 
+   */
+  Eigen::Matrix3d leftQ(Eigen::VectorXd eksi);
+
+  Eigen::Matrix3d rightQ(Eigen::VectorXd eksi);
+
+
+  /**
+   * @brief Left Jacobian of SE(3) pose matrix as defined in
+   *        eqn. (7.85) in State Estimation for Robotics book.
+   * 
+   * @param eksi 6d vector containing rot and trans.
+   * 
+   * @return J_left 6x6 matrix 
+   */
+  Eigen::MatrixXd leftJacobian(Eigen::VectorXd eksi);
+
+
+  /**
+   * @brief Right Jacobian and Jr = Jl(-eksi)
+   * 
+   * @param eksi 6d vector containing rot and trans.
+   * 
+   * @return J_r 6x6 matrix
+   */
+  Eigen::MatrixXd rightJacobian(Eigen::VectorXd eksi);
+
+
   class Pose {
     public:
 
@@ -60,6 +94,7 @@ namespace SE3
 
       Eigen::Matrix4d pose;
       SO3::Rotation rotation;
+      Eigen::Vector3d axis_angle;
       Eigen::Vector3d translation;
   };
 
