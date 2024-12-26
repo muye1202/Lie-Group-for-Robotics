@@ -116,6 +116,30 @@ Eigen::Matrix3d SO3::rightJacobian_inv(Eigen::Vector3d w) {
 }
 
 
+Eigen::Matrix3d SO3::dRp_dphi(SO3::Rotation R, Eigen::Vector3d p) {
+
+  // Get axis-angle rot vector from LogMap
+  Eigen::Vector3d axis_angle = SO3::LogMap(R.GetMatrix());
+
+  // left Jacobian at phi
+  Eigen::Matrix3d J_left = SO3::leftJacobian(axis_angle);
+
+  Eigen::Vector3d R_p = R.GetMatrix() * p;
+  Eigen::Matrix3d dR = -1*SO3::skewSymmetric(R_p)*J_left;
+
+  return dR;
+}
+
+
+Eigen::Matrix3d SO3::dRp_dR(SO3::Rotation R, Eigen::Vector3d p) {
+
+  Eigen::Vector3d R_p = R.GetMatrix() * p;
+  Eigen::Matrix3d dR = -1*SO3::skewSymmetric(R_p);
+
+  return dR;
+}
+
+
 Eigen::Matrix3d SO3::J_JT(Eigen::Vector3d w) {
   // get the rotation angle
   double rot_angle = w.norm();

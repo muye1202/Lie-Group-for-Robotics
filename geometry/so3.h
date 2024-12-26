@@ -150,6 +150,29 @@ namespace SO3
    */
   Eigen::Vector3d LogMap(Eigen::Matrix3d R);
 
+
+  /**
+   * @brief Rotation derivative w.r.t so(3) Lie Algebra rotation vector.
+   *        as defined in (7.161) in Barfoot's book.
+   * 
+   * @param R SO3 rotation matrix at current phi.
+   * @param p Any 3d point coordinate.
+   * @return 3x3 derivative matrix.
+   */
+  Eigen::Matrix3d dRp_dphi(SO3::Rotation R, Eigen::Vector3d p);
+
+
+  /**
+   * @brief Rotation derivative w.r.t rotation in SO(3) instead of Lie Algebra,
+   *        this formulation gets rid of the left Jacobian needed otherwise.
+   *        as defined in (7.174) in Barfoot's book.
+   * 
+   * @param R SO3 rotation matrix at current working point.
+   * @param p Any 3d point coordinate.
+   * @return 3x3 derivative matrix.
+   */
+  Eigen::Matrix3d dRp_dR(SO3::Rotation R, Eigen::Vector3d p);
+
 }
 
 

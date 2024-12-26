@@ -2,6 +2,21 @@
 #include <Eigen/Dense>
 
 
+Eigen::MatrixXd SE3::LieAlgebra_4d(const Eigen::Vector4d& p) {
+
+  Eigen::MatrixXd result(4,6);
+  result.setZero();
+
+  Eigen::Vector3d eps;
+  eps << p.x(), p.y(), p.z();
+
+  result.block(0,0,3,3) = p.w() * Eigen::Matrix3d::Identity(3,3);
+  result.block(0,3,3,3) = -1*SO3::skewSymmetric(eps);
+
+  return result;
+}
+
+
 Eigen::Matrix4d SE3::skewSymmetric(const Eigen::VectorXd& eksi) {
   Eigen::Vector3d pos = eksi.block(3,0,3,1);
   Eigen::Vector3d rot_vec = eksi.block(0,0,3,1);
@@ -100,13 +115,13 @@ SE3::Pose::Pose(Eigen::Matrix4d target) {
 
 /////////////////////////////////////////
 
-SO3::Rotation SE3::Pose::GetRotation() {
-  return rotation;
-}
+Eigen::VectorXd SE3::Pose::GetPoseVector() {
 
+  // 6d pose vector eksi
+  Eigen::VectorXd eksi(6);
+  eksi << this->translation, this->axis_angle;
 
-Eigen::Vector3d SE3::Pose::GetTranslation() {
-  return translation;
+  return eksi;
 }
 
 
@@ -278,4 +293,28 @@ Eigen::Matrix3d SE3::leftQ(Eigen::VectorXd eksi) {
 Eigen::Matrix3d SE3::rightQ(Eigen::VectorXd eksi) {
   
   return SE3::leftQ(-1*eksi);
+}
+
+
+Eigen::MatrixXd SE3::PoseJacobian(SE3::Pose T, Eigen::Vector4d p) {
+
+  Eigen::Vector3d angle_axis = T.GetAxisAngle();
+  Eigen::MatrixXd left_J = SE3::leftJacobian(T.GetPoseVector());
+
+  Eigen::Vector4d T_p = T.GetPose() * p;
+  Eigen::MatrixXd lie_algebra_Tp = SE3::LieAlgebra_4d(T_p);
+
+  // DEBUG: need to check the dimension 
+  Eigen::MatrixXd result = lie_algebra_Tp * left_J;
+
+  return result;
+}
+
+
+Eigen::Matrix4d SE3::leftPerturbDerivative(SE3::Pose T, Eigen::Vector4d p) {
+
+  Eigen::Vector4d T_p = T.GetPose() * p;
+  Eigen::MatrixXd lie_algebra_Tp = SE3::LieAlgebra_4d(T_p);   // 4x6 matrix
+
+  return lie_algebra_Tp;
 }

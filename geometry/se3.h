@@ -9,12 +9,22 @@ namespace SE3
 {
 
   /**
+   * @brief Lie Algebra for 4d vector. As defined in page 221 in 
+   *        Barfoot's book, used in pose derivative in (7.187).
+   * 
+   * @param p 4d vector
+   * @return 4x6 matrix for Lie Algebra.
+   */
+  Eigen::MatrixXd LieAlgebra_4d(const Eigen::Vector4d& p);
+
+  /**
    * @brief Hat operator for 6d pose vector - [pos rot]
    * 
    * @param eksi 6d pose vector
    * @return matrix in se(3)
    */
   Eigen::Matrix4d skewSymmetric(const Eigen::VectorXd& eksi);
+
 
   /**
    * @brief Exponential Map for se(3) goes from se(3) to SE(3)
@@ -97,11 +107,15 @@ namespace SE3
         return new_so3;
       }
 
-      SO3::Rotation GetRotation();
+      SO3::Rotation GetRotation() {return rotation;};
 
-      Eigen::Vector3d GetTranslation();
+      Eigen::Vector3d GetTranslation() {return translation;};
 
       Eigen::Matrix4d GetPose() {return pose;}
+
+      Eigen::Vector3d GetAxisAngle() {return axis_angle;}
+
+      Eigen::VectorXd GetPoseVector();
 
       Eigen::Matrix4d inverse();
 
@@ -116,6 +130,28 @@ namespace SE3
       Eigen::Vector3d axis_angle;
       Eigen::Vector3d translation;
   };
+
+
+  /**
+   * @brief Derivative of T*p w.r.t Eksi vector representing translation and
+   *        rotation. As defined in (7.187) in Barfoot's book. 
+   * 
+   * @param T SE(3) matrix representing pose.
+   * @param p Homogeneous coordinate in R4.
+   * @return 4x4 matrix.
+   */
+  Eigen::MatrixXd PoseJacobian(SE3::Pose T, Eigen::Vector4d p);
+
+
+  /**
+   * @brief Derivative w.r.t perturbation of SE(3) pose without the need
+   *        of left Jacobian. Defined in (7.189) in Barfoot's book.
+   * 
+   * @param T SE(3) matrix representing pose.
+   * @param p Homogeneous coordinate in R4.
+   * @return 4x4 matrix.
+   */
+  Eigen::Matrix4d leftPerturbDerivative(SE3::Pose T, Eigen::Vector4d p);
 
 }
 
