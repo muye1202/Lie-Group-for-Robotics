@@ -89,7 +89,7 @@ Eigen::Matrix3d SO3::leftJacobian_inv(Eigen::Vector3d w) {
 Eigen::Matrix3d SO3::rightJacobian(Eigen::Vector3d w) {
   // get the rotation angle
   double rot_angle = w.norm();
-  
+
   // get the unit rot vector
   Eigen::Vector3d unit_rot = w.normalized();
 

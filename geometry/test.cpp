@@ -25,23 +25,76 @@ int main() {
     {-1.0, 1.0, 0.0}
   };
 
-  Eigen::Matrix3d ref_Rx;
-  ref_Rx << 1.0, 0.0, 0.0,
-            0.0, std::cos(PI/2.), -std::sin(PI/2.),
-            0.0, std::sin(PI/2.), std::cos(PI/2.);
+  // SE3 Pose Constructor Tests
+  SE3::Pose T1(x_rot, p1);
+  std::cout << "T1 pose\n";
+  std::cout << T1.GetPose();
 
-  SO3::Rotation Rx(x_rot);
-  std::cout << "rotation 45 degree in x-axis:\n";
-  std::cout << Rx.GetMatrix();
-  std::cout << std::endl;
+  // Eigen::Matrix3d ref_Rx;
+  // ref_Rx << 1.0, 0.0, 0.0,
+  //           0.0, std::cos(PI/2.), -std::sin(PI/2.),
+  //           0.0, std::sin(PI/2.), std::cos(PI/2.);
 
-  std::cout << "transpose of Rx:\n";
-  std::cout << Rx.transpose().GetMatrix();
-  std::cout << std::endl;
+  // SO3::Rotation Rx(x_rot);
+  // std::cout << "\nrotation 45 degree in x-axis:\n";
+  // std::cout << Rx.GetMatrix();
+  // std::cout << std::endl;
 
-  std::cout << "inverse of Rx:\n";
-  std::cout << Rx.inverse().GetMatrix();
-  std::cout << std::endl;
+  // SE3::Pose T2(Rx.GetMatrix(), p1);
+  // std::cout << "\nT2 pose\n";
+  // std::cout << T2.GetPose() << std::endl;
+
+  // SE3::Pose T3(Rx, p1);
+  // std::cout << "\nT3 pose\n";
+  // std::cout << T3.GetPose() << std::endl;
+
+  // Eigen::Matrix4d T1_pose = T1.GetPose();
+  // SE3::Pose T4(T1_pose);
+  // std::cout << "\nT4 pose\n";
+  // std::cout << T4.GetPose() << std::endl;
+
+  ////////////////////////////////
+
+  // Eigen::Matrix4d T1_inv = T1.inverse();
+  // std::cout << "\nT1 inverse\n";
+  // std::cout << T1_inv << std::endl;
+
+  // Eigen::MatrixXd T1_adj = T1.adjoint();
+  // std::cout << "\nAdjoint of T1\n";
+  // std::cout << T1_adj << std::endl;
+
+  // Eigen::MatrixXd T1_adj_inv = T1.adjoint_inv();
+  // std::cout << "\nAdjoint inverse of T1\n";
+  // std::cout << T1_adj_inv << std::endl;
+
+  ////////////////////////////////
+
+  Eigen::VectorXd eksi(6);
+  eksi << p1, x_rot;
+
+  Eigen::MatrixXd J_left = SE3::leftJacobian(eksi);
+  std::cout << "\nleft Jacobian\n";
+  std::cout << J_left << std::endl;
+
+  Eigen::MatrixXd J_right = SE3::rightJacobian(eksi);
+  std::cout << "\nright Jacobian\n";
+  std::cout << J_right << std::endl;
+
+  Eigen::MatrixXd J_left_inv = SE3::leftJacobian_inv(eksi);
+  std::cout << "\ninverse of left Jacobian\n";
+  std::cout << J_left_inv << std::endl;
+
+  Eigen::MatrixXd J_right_inv = SE3::rightJacobian_inv(eksi);
+  std::cout << "\ninverse of right Jacobian\n";
+  std::cout << J_right_inv << std::endl;
+
+  // std::cout << "transpose of Rx:\n";
+  // std::cout << Rx.transpose().GetMatrix();
+  // std::cout << std::endl;
+
+  // std::cout << "inverse of Rx:\n";
+  // std::cout << Rx.inverse().GetMatrix();
+  // std::cout << std::endl;
 
   // if (ref_Rx.isApprox(Rx.GetMatrix())) {
   //   std::cout << "implementation of Rx is correct!\n";

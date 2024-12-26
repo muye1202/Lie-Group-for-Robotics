@@ -60,6 +60,25 @@ namespace SE3
   Eigen::MatrixXd rightJacobian(Eigen::VectorXd eksi);
 
 
+  /**
+   * @brief Inverse of left Jacobian of SE(3) elements.
+   *        As given in (7.95) in Barfoot's text.
+   * 
+   * @param eksi 6d vector containing translation and rotation.
+   * @return 6x6 inverse of J_left.
+   */
+  Eigen::MatrixXd leftJacobian_inv(Eigen::VectorXd eksi);
+
+
+  /**
+   * @brief Inverse of right Jacobian.
+   * 
+   * @param eksi 6d vector containing translation and rotation.
+   * @return 6x6 inverse of J_left.
+   */
+  Eigen::MatrixXd rightJacobian_inv(Eigen::VectorXd eksi);
+
+
   class Pose {
     public:
 

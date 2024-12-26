@@ -111,6 +111,7 @@ Eigen::Vector3d SE3::Pose::GetTranslation() {
 
 
 Eigen::Matrix4d SE3::Pose::inverse() {
+
   Eigen::Matrix4d T_inv;
   T_inv.setZero();
 
@@ -123,6 +124,7 @@ Eigen::Matrix4d SE3::Pose::inverse() {
 
 
 Eigen::MatrixXd SE3::Pose::adjoint() {
+
   Eigen::MatrixXd Ad_T(6,6);
   Ad_T.setZero();
 
@@ -142,7 +144,8 @@ Eigen::MatrixXd SE3::Pose::adjoint() {
 
 
 Eigen::MatrixXd SE3::Pose::adjoint_inv() {
-  Eigen::MatrixXd AdT_inv;
+
+  Eigen::MatrixXd AdT_inv(6,6);
   AdT_inv.setZero();
 
   // C.T - 3x3 matrix
@@ -164,8 +167,8 @@ Eigen::MatrixXd SE3::Pose::adjoint_inv() {
 
 Eigen::MatrixXd SE3::leftJacobian(Eigen::VectorXd eksi) {
 
-  Eigen::Vector3d rot = eksi.block(3,1,3,1);
-  Eigen::Vector3d p = eksi.block(0,0,3,1);
+  Eigen::Vector3d rot = eksi.segment<3>(0);
+  Eigen::Vector3d p = eksi.segment<3>(3);
 
   // Get Jl block where Jl is Jacobian of SO(3)
   Eigen::Matrix3d Jl = SO3::leftJacobian(rot);
@@ -185,15 +188,68 @@ Eigen::MatrixXd SE3::leftJacobian(Eigen::VectorXd eksi) {
 
 Eigen::MatrixXd SE3::rightJacobian(Eigen::VectorXd eksi) {
 
-  return SE3::leftJacobian(-1*eksi);
+  Eigen::Vector3d rot = eksi.segment<3>(0);
+  Eigen::Vector3d p = eksi.segment<3>(3);
+
+  // Get Jl block where Jl is Jacobian of SO(3)
+  Eigen::Matrix3d Jr_so3 = SO3::rightJacobian(rot);
+
+  Eigen::Matrix3d Q_r = SE3::rightQ(eksi);
+
+  Eigen::MatrixXd Jr(6,6);
+  Jr.setZero();
+
+  Jr.block(0,0,3,3) = Jr_so3;
+  Jr.block(0,3,3,3) = Q_r;
+  Jr.block(3,3,3,3) = Jr_so3;
+
+  return Jr;
+}
+
+
+Eigen::MatrixXd SE3::leftJacobian_inv(Eigen::VectorXd eksi) {
+
+  Eigen::Vector3d rot = eksi.segment<3>(0);
+  Eigen::Vector3d p = eksi.segment<3>(3);
+
+  Eigen::MatrixXd Jl_inv(6,6);
+  Jl_inv.setZero();
+
+  Eigen::Matrix3d SO3_Jl_inv = SO3::leftJacobian_inv(rot);
+  Eigen::Matrix3d Ql = SE3::leftQ(eksi);
+
+  Jl_inv.block(0,0,3,3) = SO3_Jl_inv;
+  Jl_inv.block(0,3,3,3) = -1*SO3_Jl_inv*Ql*SO3_Jl_inv;
+  Jl_inv.block(3,3,3,3) = SO3_Jl_inv;
+
+  return Jl_inv;
+}
+
+
+Eigen::MatrixXd SE3::rightJacobian_inv(Eigen::VectorXd eksi) {
+
+  Eigen::Vector3d rot = eksi.segment<3>(0);
+  Eigen::Vector3d p = eksi.segment<3>(3);
+
+  Eigen::MatrixXd Jr_inv(6,6);
+  Jr_inv.setZero();
+
+  Eigen::Matrix3d SO3_Jr_inv = SO3::rightJacobian_inv(rot);
+  Eigen::Matrix3d Qr = SE3::rightQ(eksi);
+
+  Jr_inv.block(0,0,3,3) = SO3_Jr_inv;
+  Jr_inv.block(0,3,3,3) = -1*SO3_Jr_inv*Qr*SO3_Jr_inv;
+  Jr_inv.block(3,3,3,3) = SO3_Jr_inv;
+
+  return Jr_inv;
 }
 
 
 // Formula (7.86b) in Barfoot's book
 Eigen::Matrix3d SE3::leftQ(Eigen::VectorXd eksi) {
 
-  Eigen::Vector3d rot = eksi.block(3,1,3,1);
-  Eigen::Vector3d p = eksi.block(0,0,3,1);
+  Eigen::Vector3d rot = eksi.segment<3>(0);
+  Eigen::Vector3d p = eksi.segment<3>(3);
 
   // rou^ matrix where rou is translation
   Eigen::Matrix3d p_hat = SO3::skewSymmetric(p);
