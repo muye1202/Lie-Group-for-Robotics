@@ -18,7 +18,7 @@ Eigen::MatrixXd SE3::LieAlgebra_4d(const Eigen::Vector4d& p) {
 
 
 Eigen::Matrix4d SE3::skewSymmetric(const Eigen::VectorXd& eksi) {
-  Eigen::Vector3d pos = eksi.block(3,0,3,1);
+
   Eigen::Vector3d rot_vec = eksi.block(0,0,3,1);
 
   Eigen::Matrix3d phi_hat = SO3::skewSymmetric(rot_vec);
@@ -183,7 +183,6 @@ Eigen::MatrixXd SE3::Pose::adjoint_inv() {
 Eigen::MatrixXd SE3::leftJacobian(Eigen::VectorXd eksi) {
 
   Eigen::Vector3d rot = eksi.segment<3>(0);
-  Eigen::Vector3d p = eksi.segment<3>(3);
 
   // Get Jl block where Jl is Jacobian of SO(3)
   Eigen::Matrix3d Jl = SO3::leftJacobian(rot);
@@ -204,7 +203,6 @@ Eigen::MatrixXd SE3::leftJacobian(Eigen::VectorXd eksi) {
 Eigen::MatrixXd SE3::rightJacobian(Eigen::VectorXd eksi) {
 
   Eigen::Vector3d rot = eksi.segment<3>(0);
-  Eigen::Vector3d p = eksi.segment<3>(3);
 
   // Get Jl block where Jl is Jacobian of SO(3)
   Eigen::Matrix3d Jr_so3 = SO3::rightJacobian(rot);
@@ -225,7 +223,6 @@ Eigen::MatrixXd SE3::rightJacobian(Eigen::VectorXd eksi) {
 Eigen::MatrixXd SE3::leftJacobian_inv(Eigen::VectorXd eksi) {
 
   Eigen::Vector3d rot = eksi.segment<3>(0);
-  Eigen::Vector3d p = eksi.segment<3>(3);
 
   Eigen::MatrixXd Jl_inv(6,6);
   Jl_inv.setZero();
@@ -244,7 +241,6 @@ Eigen::MatrixXd SE3::leftJacobian_inv(Eigen::VectorXd eksi) {
 Eigen::MatrixXd SE3::rightJacobian_inv(Eigen::VectorXd eksi) {
 
   Eigen::Vector3d rot = eksi.segment<3>(0);
-  Eigen::Vector3d p = eksi.segment<3>(3);
 
   Eigen::MatrixXd Jr_inv(6,6);
   Jr_inv.setZero();
@@ -298,7 +294,6 @@ Eigen::Matrix3d SE3::rightQ(Eigen::VectorXd eksi) {
 
 Eigen::MatrixXd SE3::PoseJacobian(SE3::Pose T, Eigen::Vector4d p) {
 
-  Eigen::Vector3d angle_axis = T.GetAxisAngle();
   Eigen::MatrixXd left_J = SE3::leftJacobian(T.GetPoseVector());
 
   Eigen::Vector4d T_p = T.GetPose() * p;

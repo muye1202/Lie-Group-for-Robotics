@@ -11,7 +11,7 @@ find_package(Eigen3 3.4 REQUIRED)
 
 # Add your source files and header files
 set(SOURCES
-    geometry/test.cpp
+    test.cpp
     geometry/so3.cpp
     geometry/se3.cpp
 )
