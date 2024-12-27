@@ -38,67 +38,67 @@ namespace SO3
    * @brief Exponential map of so(3). Convert axis-angle rotation
    *        vector to SO(3) rotation matrix.
    * 
-   * @param w
+   * @param phi
    * @return Rotation matrix in SO(3)
    */
-  Eigen::Matrix3d ExpMap(Eigen::Vector3d w);
+  Eigen::Matrix3d ExpMap(Eigen::Vector3d phi);
 
 
   /**
    * @brief Compute Left Jacobian of SO(3)
    *        This will be used in computing SE(3) Pose.
    * 
-   * @param w 
+   * @param phi 
    * @return Left Jacobian 3x3.
    */
-  Eigen::Matrix3d leftJacobian(Eigen::Vector3d w);
+  Eigen::Matrix3d leftJacobian(Eigen::Vector3d phi);
 
 
   /**
    * @brief Inverse of left Jacobian.
    * 
-   * @param w 
+   * @param phi 
    * @return Inverse of Left Jacobian
    */
-  Eigen::Matrix3d leftJacobian_inv(Eigen::Vector3d w);
+  Eigen::Matrix3d leftJacobian_inv(Eigen::Vector3d phi);
 
 
   /**
    * @brief Compute right Jacobian of SO(3)
    *        Reference: State estimation for robotics formula (7.77)
    * 
-   * @param w 
+   * @param phi 
    * @return Right Jacobian 3x3
    */
-  Eigen::Matrix3d rightJacobian(Eigen::Vector3d w);
+  Eigen::Matrix3d rightJacobian(Eigen::Vector3d phi);
 
 
   /**
    * @brief Inverse of right Jacobian.
    *        Reference: State estimation for robotics formula (7.76)
    * 
-   * @param w 
+   * @param phi 
    * @return Inverse - 3x3
    */
-  Eigen::Matrix3d rightJacobian_inv(Eigen::Vector3d w);
+  Eigen::Matrix3d rightJacobian_inv(Eigen::Vector3d phi);
 
 
   /**
    * @brief J @ J.T where J is the left Jacobian.
    * 
-   * @param w 
+   * @param phi 
    * @return J @ J.T
    */
-  Eigen::Matrix3d J_JT(Eigen::Vector3d w);
+  Eigen::Matrix3d J_JT(Eigen::Vector3d phi);
 
 
   /**
    * @brief Inverse of J@J.T
    * 
-   * @param w 
+   * @param phi 
    * @return (J @ J.T).inv 
    */
-  Eigen::Matrix3d J_JT_inv(Eigen::Vector3d w);
+  Eigen::Matrix3d J_JT_inv(Eigen::Vector3d phi);
 
 
   // SO(3) - special orthogonal group representing rotation
@@ -111,9 +111,9 @@ namespace SO3
        * @brief Construct a new Rotation object using R3 rotation vector
        *        The Rotation rotation matrix is calculated using exponential map
        * 
-       * @param w - rotation vector in R3.
+       * @param phi - rotation vector in R3.
        */
-      Rotation(Eigen::Vector3d w);
+      Rotation(Eigen::Vector3d phi);
 
       Rotation(Eigen::Matrix3d rotation_mat);
 

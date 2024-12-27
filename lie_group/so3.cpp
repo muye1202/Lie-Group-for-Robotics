@@ -28,12 +28,12 @@ Eigen::Matrix3d SO3::skewSymmetric(const Eigen::Vector3d& vec) {
 }
 
 
-Eigen::Matrix3d SO3::ExpMap(Eigen::Vector3d w) {
+Eigen::Matrix3d SO3::ExpMap(Eigen::Vector3d phi) {
   // get the rotation angle
-  double rot_angle = w.norm();
+  double rot_angle = phi.norm();
   
   // get the unit rot vector
-  Eigen::Vector3d unit_rot = w.normalized();
+  Eigen::Vector3d unit_rot = phi.normalized();
 
   // exponential map: so(3) -> SO(3)
   Eigen::Matrix3d exp_map = std::cos(rot_angle) * Eigen::MatrixXd::Identity(3,3)
@@ -56,12 +56,12 @@ Eigen::Vector3d SO3::LogMap(Eigen::Matrix3d R) {
 }
 
 
-Eigen::Matrix3d SO3::leftJacobian(Eigen::Vector3d w) {
+Eigen::Matrix3d SO3::leftJacobian(Eigen::Vector3d phi) {
   // get the rotation angle
-  double rot_angle = w.norm();
+  double rot_angle = phi.norm();
   
   // get the unit rot vector
-  Eigen::Vector3d unit_rot = w.normalized();
+  Eigen::Vector3d unit_rot = phi.normalized();
 
   Eigen::Matrix3d left_J = (std::sin(rot_angle) / rot_angle) * Eigen::MatrixXd::Identity(3,3) + 
                            (1 - std::sin(rot_angle) / rot_angle) * unit_rot * unit_rot.transpose() + 
@@ -71,12 +71,12 @@ Eigen::Matrix3d SO3::leftJacobian(Eigen::Vector3d w) {
 }
 
 
-Eigen::Matrix3d SO3::leftJacobian_inv(Eigen::Vector3d w) {
+Eigen::Matrix3d SO3::leftJacobian_inv(Eigen::Vector3d phi) {
   // get the rotation angle
-  double rot_angle = w.norm();
+  double rot_angle = phi.norm();
   
   // get the unit rot vector
-  Eigen::Vector3d unit_rot = w.normalized();
+  Eigen::Vector3d unit_rot = phi.normalized();
 
   Eigen::Matrix3d leftJ_inv = (0.5*rot_angle) * 1./(std::tan(0.5*rot_angle)) * Eigen::MatrixXd::Identity(3,3) +
                               (1 - (0.5*rot_angle) * 1./(std::tan(0.5*rot_angle))) * unit_rot * unit_rot.transpose() -
@@ -86,12 +86,12 @@ Eigen::Matrix3d SO3::leftJacobian_inv(Eigen::Vector3d w) {
 }
 
 
-Eigen::Matrix3d SO3::rightJacobian(Eigen::Vector3d w) {
+Eigen::Matrix3d SO3::rightJacobian(Eigen::Vector3d phi) {
   // get the rotation angle
-  double rot_angle = w.norm();
+  double rot_angle = phi.norm();
 
   // get the unit rot vector
-  Eigen::Vector3d unit_rot = w.normalized();
+  Eigen::Vector3d unit_rot = phi.normalized();
 
   Eigen::Matrix3d Jr = (std::sin(rot_angle) / rot_angle) * Eigen::MatrixXd::Identity(3,3) + 
                            (1 - std::sin(rot_angle) / rot_angle) * unit_rot * unit_rot.transpose() - 
@@ -101,12 +101,12 @@ Eigen::Matrix3d SO3::rightJacobian(Eigen::Vector3d w) {
 }
 
 
-Eigen::Matrix3d SO3::rightJacobian_inv(Eigen::Vector3d w) {
+Eigen::Matrix3d SO3::rightJacobian_inv(Eigen::Vector3d phi) {
   // get the rotation angle
-  double rot_angle = w.norm();
+  double rot_angle = phi.norm();
   
   // get the unit rot vector
-  Eigen::Vector3d unit_rot = w.normalized();
+  Eigen::Vector3d unit_rot = phi.normalized();
 
   Eigen::Matrix3d Jr_inv = (0.5*rot_angle) * 1./(std::tan(0.5*rot_angle)) * Eigen::MatrixXd::Identity(3,3) +
                               (1 - (0.5*rot_angle) * 1./(std::tan(0.5*rot_angle))) * unit_rot * unit_rot.transpose() +
@@ -140,14 +140,14 @@ Eigen::Matrix3d SO3::dRp_dR(SO3::Rotation R, Eigen::Vector3d p) {
 }
 
 
-Eigen::Matrix3d SO3::J_JT(Eigen::Vector3d w) {
+Eigen::Matrix3d SO3::J_JT(Eigen::Vector3d phi) {
   // get the rotation angle
-  double rot_angle = w.norm();
+  double rot_angle = phi.norm();
 
   double gamma = 2*(1-std::cos(rot_angle)) / (std::pow(rot_angle,2));
 
   // get the unit rot vector
-  Eigen::Vector3d unit_rot = w.normalized();
+  Eigen::Vector3d unit_rot = phi.normalized();
 
   Eigen::Matrix3d JJT = gamma * Eigen::MatrixXd::Identity(3,3) +
                         (1 - gamma) * unit_rot * unit_rot.transpose();
@@ -156,14 +156,14 @@ Eigen::Matrix3d SO3::J_JT(Eigen::Vector3d w) {
 }
 
 
-Eigen::Matrix3d SO3::J_JT_inv(Eigen::Vector3d w) {
+Eigen::Matrix3d SO3::J_JT_inv(Eigen::Vector3d phi) {
   // get the rotation angle
-  double rot_angle = w.norm();
+  double rot_angle = phi.norm();
 
   double gamma = 2*(1-std::cos(rot_angle)) / (std::pow(rot_angle,2));
 
   // get the unit rot vector
-  Eigen::Vector3d unit_rot = w.normalized();
+  Eigen::Vector3d unit_rot = phi.normalized();
 
   Eigen::Matrix3d JJT_inv = (1./gamma) * Eigen::MatrixXd::Identity(3,3) +
                         (1 - 1./gamma) * unit_rot * unit_rot.transpose();
@@ -172,8 +172,8 @@ Eigen::Matrix3d SO3::J_JT_inv(Eigen::Vector3d w) {
 }
 
 
-SO3::Rotation::Rotation(Eigen::Vector3d w) : rot(w) {
-  Eigen::Matrix3d exp_map = SO3::ExpMap(w);
+SO3::Rotation::Rotation(Eigen::Vector3d phi) : rot(phi) {
+  Eigen::Matrix3d exp_map = SO3::ExpMap(phi);
   mat_rot = exp_map;
 }
 
