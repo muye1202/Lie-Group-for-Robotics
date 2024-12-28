@@ -14,11 +14,13 @@ set(SOURCES
     test.cpp
     lie_group/so3.cpp
     lie_group/se3.cpp
+    lie_kinematics/kinematics.cpp
 )
 
 set(HEADERS
     lie_group/so3.h
     lie_group/se3.h
+    lie_kinematics/kinematics.h
 )
 
 # Include directories for the header files

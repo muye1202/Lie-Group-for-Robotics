@@ -32,6 +32,18 @@ Eigen::Matrix4d SE3::skewSymmetric(const Eigen::VectorXd& eksi) {
 }
 
 
+Eigen::VectorXd SE3::unhat_6d(const Eigen::Matrix4d& eksi_hat) {
+
+  Eigen::Matrix3d phi_hat = eksi_hat.block(0,0,3,3);
+  Eigen::Vector3d rou = eksi_hat.block(0,3,3,1);
+
+  Eigen::VectorXd eksi(6);
+  eksi << SO3::unhat(phi_hat), rou;
+
+  return eksi;
+}
+
+
 Eigen::Matrix4d SE3::ExpMap(Eigen::VectorXd eksi) {
   // get the rotation angle
   Eigen::Vector3d rot_vec = eksi.block(0,0,3,1);

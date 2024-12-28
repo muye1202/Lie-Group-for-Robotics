@@ -17,6 +17,7 @@ namespace SE3
    */
   Eigen::MatrixXd LieAlgebra_4d(const Eigen::Vector4d& p);
 
+
   /**
    * @brief Hat operator for 6d pose vector - [pos rot]
    * 
@@ -24,6 +25,15 @@ namespace SE3
    * @return matrix in se(3)
    */
   Eigen::Matrix4d skewSymmetric(const Eigen::VectorXd& eksi);
+
+
+  /**
+   * @brief Convert skew symmetric matrix back to 6d vector.
+   * 
+   * @param eksi_hat Skew symmetric matrix 4x4.
+   * @return eksi 6d vector.
+   */
+  Eigen::VectorXd unhat_6d(const Eigen::Matrix4d& eksi_hat);
 
 
   /**
