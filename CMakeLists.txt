@@ -23,8 +23,10 @@ set(HEADERS
     lie_kinematics/kinematics.h
 )
 
-# Include directories for the header files
-include_directories(include)
+include_directories(
+  ${CMAKE_SOURCE_DIR}/lie_group
+  ${CMAKE_SOURCE_DIR}/lie_kinematics
+)
 
 # Create the executable
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})

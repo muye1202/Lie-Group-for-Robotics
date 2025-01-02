@@ -2,8 +2,8 @@
 #define KINEMATICS_H
 
 #include <Eigen/Dense>
-#include "lie_group/se3.h"
-#include "lie_group/so3.h"
+#include "se3.h"
+#include "so3.h"
 
 
 namespace LieKin
