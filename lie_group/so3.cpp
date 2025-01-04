@@ -1,6 +1,7 @@
 #include "so3.h"
 #include <cmath>
 #include <Eigen/Dense>
+#include <gsl/gsl_integration.h>
 
 
 double SO3::SO3toAngle(Eigen::Matrix3d mat) {
@@ -113,6 +114,30 @@ Eigen::Matrix3d SO3::rightJacobian_inv(Eigen::Vector3d phi) {
                               (0.5*rot_angle) * skewSymmetric(unit_rot);
 
   return Jr_inv;
+}
+
+
+Eigen::Vector3d SO3::left_distance(SO3::Rotation R1, SO3::Rotation R2) {
+
+  Eigen::Matrix3d R_RT = R1.GetMatrix() * R2.GetMatrix().transpose();
+
+  return SO3::LogMap(R_RT);
+}
+
+
+Eigen::Vector3d SO3::right_distance(SO3::Rotation R1, SO3::Rotation R2) {
+
+  Eigen::Matrix3d R_RT = R1.GetMatrix().transpose() * R2.GetMatrix();
+
+  return SO3::LogMap(R_RT);
+}
+
+
+template <typename RotExpression>
+Eigen::Vector3d integrate_rotation(Eigen::Vector3d phi0, Eigen::Vector3d phi_end, RotExpression expr) {
+
+  auto integrand = []()
+
 }
 
 

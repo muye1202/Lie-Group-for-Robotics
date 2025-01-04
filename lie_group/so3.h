@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <Eigen/Dense>
+#include <functional>
 
 namespace SO3
 {
@@ -172,6 +173,42 @@ namespace SO3
    * @return 3x3 derivative matrix.
    */
   Eigen::Matrix3d dRp_dR(SO3::Rotation R, Eigen::Vector3d p);
+
+
+  /**
+   * @brief The left distance (or difference) between two rotations in SO(3) as defined
+   *        in (7.101b).
+   * 
+   * @param R1 
+   * @param R2 
+   * @return Left distance vector in R3
+   */
+  Eigen::Vector3d left_distance(SO3::Rotation R1, SO3::Rotation R2);
+
+
+  /**
+   * @brief The right distance between SO(3) elements - (7.101a).
+   * 
+   * @param R1 
+   * @param R2 
+   * @return Right distance vector in R3
+   */
+  Eigen::Vector3d right_distance(SO3::Rotation R1, SO3::Rotation R2);
+
+
+  /**
+   * @brief Integrate a function of SO(3) rotation according to (7.109) in Barfoot's text.
+   * 
+   * @tparam RotExpression should be a function of phi (axis-angle)
+   * @param phi0 The lower limit of the integral
+   * @param phi_end The upper limit of the integral
+   * @param expr The function being integrated
+   * @return The result vector in R3
+   */
+  template <typename RotExpression>
+  Eigen::Vector3d integrate_rotation(Eigen::Vector3d phi0, 
+                                     Eigen::Vector3d phi_end,
+                                     RotExpression expr);
 
 }
 
