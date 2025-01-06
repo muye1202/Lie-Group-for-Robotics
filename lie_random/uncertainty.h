@@ -6,8 +6,53 @@
 #include "so3.h"
 
 
-namespace LIE_RANDOM
+namespace Lie_Estimation
 {
+
+  ////////////////////////////////////////////////////////////////
+  //////// Operators defined in pp. 239 of Barfoot's text ////////
+  ////////////////////////////////////////////////////////////////
+
+  /**
+   * @brief operator defined in (7.300a)
+   * 
+   * @param A Input 3x3 matrix
+   */
+  Eigen::Matrix3d bracket_single(Eigen::Matrix3d A);
+
+  /**
+   * @brief Operator defined in (7.300b)
+   */
+  Eigen::Matrix3d bracket_double(Eigen::Matrix3d A, Eigen::Matrix3d B);
+
+  /**
+   * @brief Merge two SE(3) poses with gaussian noises and return its cov.
+   *        the final covariance is accurate to 4th order.
+   * 
+   * @param Ta mean of pose A
+   * @param Tb mean of pose B
+   * @param Cov_a Covariance of pose A - 6x6
+   * @param Cov_b Covariance of pose B - 6x6
+   * @return 4th order accurate Covariance of merged poses.
+   */
+  Eigen::MatrixXd merge_poses_cov(SE3::Pose Ta, SE3::Pose Tb,
+                        Eigen::MatrixXd Cov_a, Eigen::MatrixXd Cov_b);
+
+  /////////////////////////////////////////////////////////////////
+
+
+  /**
+   * @brief Mean of the vector after applying rotation R with noise
+   *        according to (7.290) in Barfoot's text.
+   * 
+   * @param R Mean of SO(3) rotation matrix with Gaussian noise epsilon.
+   * @param x R3 vector being rotated.
+   * @return Mean E[Rx] vector in R3.
+   */
+  Eigen::Vector3d rotate_vector(SO3::Rotation R_mean,
+                                Eigen::Matrix3d R_cov,
+                                Eigen::Vector3d x);
+
 
   /**
    * @brief SO(3) as a Gaussian random variable defined by (7.264) in Barfoot's book.

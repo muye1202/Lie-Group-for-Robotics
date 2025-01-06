@@ -1,7 +1,7 @@
 #include "so3.h"
 #include <cmath>
+#include <stdexcept>
 #include <Eigen/Dense>
-#include <gsl/gsl_integration.h>
 
 
 double SO3::SO3toAngle(Eigen::Matrix3d mat) {
@@ -136,7 +136,7 @@ Eigen::Vector3d SO3::right_distance(SO3::Rotation R1, SO3::Rotation R2) {
 template <typename RotExpression>
 Eigen::Vector3d integrate_rotation(Eigen::Vector3d phi0, Eigen::Vector3d phi_end, RotExpression expr) {
 
-  auto integrand = []()
+  throw std::logic_error("Rotation integration not yet implemented!");
 
 }
 
