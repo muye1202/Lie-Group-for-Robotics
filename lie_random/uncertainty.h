@@ -26,7 +26,7 @@ namespace Lie_Estimation
   Eigen::Matrix3d bracket_double(Eigen::Matrix3d A, Eigen::Matrix3d B);
 
   /**
-   * @brief Merge two SE(3) poses with gaussian noises and return its cov.
+   * @brief Merge two SE(3) poses with gaussian noises and return the new cov.
    *        the final covariance is accurate to 4th order.
    * 
    * @param Ta mean of pose A
@@ -35,8 +35,7 @@ namespace Lie_Estimation
    * @param Cov_b Covariance of pose B - 6x6
    * @return 4th order accurate Covariance of merged poses.
    */
-  Eigen::MatrixXd merge_poses_cov(SE3::Pose Ta, SE3::Pose Tb,
-                        Eigen::MatrixXd Cov_a, Eigen::MatrixXd Cov_b);
+  Eigen::MatrixXd merge_poses_cov(SE3::Pose Ta, Eigen::MatrixXd Cov_a, Eigen::MatrixXd Cov_b);
 
   /////////////////////////////////////////////////////////////////
 

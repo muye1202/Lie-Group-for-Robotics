@@ -4,20 +4,19 @@
 #include "uncertainty.h"
 
 
-Eigen::Matrix3d bracket_single(Eigen::Matrix3d A) {
+Eigen::Matrix3d Lie_Estimation::bracket_single(Eigen::Matrix3d A) {
 
   return -A.trace() * Eigen::Matrix3d::Identity(3,3) + A;
 }
 
 
-Eigen::Matrix3d bracket_double(Eigen::Matrix3d A, Eigen::Matrix3d B) {
+Eigen::Matrix3d Lie_Estimation::bracket_double(Eigen::Matrix3d A, Eigen::Matrix3d B) {
 
   return bracket_single(A) * bracket_single(B) + bracket_single(A*B);
 }
 
 
-Eigen::MatrixXd merge_poses_cov(SE3::Pose Ta, SE3::Pose Tb,
-                                Eigen::MatrixXd Cov_a, Eigen::MatrixXd Cov_b) {
+Eigen::MatrixXd Lie_Estimation::merge_poses_cov(SE3::Pose Ta, Eigen::MatrixXd Cov_a, Eigen::MatrixXd Cov_b) {
 
   Eigen::Matrix3d cova_p, cova_phi, cova_pphi, B_pp, B_pphi, B_phi;
   Eigen::MatrixXd covb_prime, covb_prime_p, covb_prime_pphi,
@@ -46,7 +45,7 @@ Eigen::MatrixXd merge_poses_cov(SE3::Pose Ta, SE3::Pose Tb,
   A2_prime.block(3,3,3,3) = bracket_single(covb_prime_phi);
 
   // (7.303) a to c
-  B_phi = bracket_double(cova_phi, covb_prime_p) 
+  B_pp = bracket_double(cova_phi, covb_prime_p)
           + bracket_double(cova_pphi.transpose(), covb_prime_pphi)
           + bracket_double(cova_pphi, covb_prime_pphi.transpose())
           + bracket_double(cova_p, covb_prime_phi);
@@ -64,7 +63,7 @@ Eigen::MatrixXd merge_poses_cov(SE3::Pose Ta, SE3::Pose Tb,
 
   return Cov_a + covb_prime + 0.25*Beta 
          + (1./12) * (A1*covb_prime + covb_prime*A1.transpose()
-                      + A2_prime*Cov_a + Cov_a*A2_prime.transpose());
+                      + A2_prime*Cov_a + Cov_a*A2_prime.transpose());   // (7.304)
 }
 
 
