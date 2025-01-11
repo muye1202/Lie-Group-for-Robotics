@@ -104,6 +104,7 @@ namespace SO3
 
   // SO(3) - special orthogonal group representing rotation
   class Rotation{
+
     public:
 
       Rotation() {rot.setZero(); mat_rot.setZero();};
