@@ -1,0 +1,7 @@
+{
+  "wheel_radius": 0.07,
+  "track_width": 0.178,
+  "motor_cmd_max": 265.0,
+  "motor_cmd_per_rad_sec": 0.024,
+  "encoder_ticks_per_rad": 651.9
+}
