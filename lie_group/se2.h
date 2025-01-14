@@ -23,6 +23,8 @@ namespace SE2 {
 
       Pose(Eigen::Matrix3d T);
 
+      Pose(Eigen::Vector3d twist);
+
       Pose(Eigen::Matrix2d R, Eigen::Vector2d t);
 
       Pose(double theta, Eigen::Vector2d t);
@@ -36,6 +38,8 @@ namespace SE2 {
       Eigen::Matrix2d GetRotation() {return _R;}
 
       Eigen::Vector2d GetTranslation() {return _t;}
+
+      std::pair<double, double> GetTransPair() { return std::make_pair(_t.x(), _t.y());}
 
 
     private:

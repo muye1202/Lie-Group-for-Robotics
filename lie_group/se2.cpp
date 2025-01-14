@@ -13,6 +13,15 @@ SE2::Pose::Pose() {
 }
 
 
+SE2::Pose::Pose(Eigen::Vector3d twist) {
+  _pose = SE2::ExpMap(twist);
+  _R = _pose.block(0,0,2,2);
+  _t = _pose.block(0,2,2,1);
+  _linear = twist.segment(0,2);
+  _angular = twist(2);
+}
+
+
 SE2::Pose::Pose(Eigen::Matrix3d T) {
   _pose = T;
   _R = T.block(0,0,2,2);

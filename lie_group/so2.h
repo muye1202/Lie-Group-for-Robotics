@@ -51,7 +51,7 @@ namespace SO2
         return Rotation(_R.transpose());
       };
 
-      Eigen::Matrix2d JRv_R(Rotation R, Eigen::Vector2d v) {
+      Eigen::Vector2d JRv_R(Rotation R, Eigen::Vector2d v) {
 
         return R._R * skewSymmetric(1.0) * v;
       }
