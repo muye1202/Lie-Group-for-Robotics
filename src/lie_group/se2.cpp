@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <Eigen/Dense>
-#include "se2.h"
+#include "lie_lib/se2.h"
 
 
 SE2::Pose::Pose() {

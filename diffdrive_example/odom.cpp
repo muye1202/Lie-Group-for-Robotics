@@ -3,8 +3,8 @@
 #include <vector>
 #include <Eigen/Dense>
 #include "nlohmann/json.hpp"
-#include "so2.h"
-#include "se2.h"
+#include "lie_lib/so2.h"
+#include "lie_lib/se2.h"
 
 
 using json = nlohmann::json;
@@ -27,24 +27,24 @@ int main() {
   std::string diff_drive_params = workspace + "diffdrive_example/diffdrive.json";
   std::ifstream file(diff_drive_params);
   if (!file.is_open()) {
-      std::cerr << "Failed to open file" << std::endl;
-      return 1;
+    std::cerr << "Failed to open file" << std::endl;
+    return 1;
   }
 
   try {
-      json params;
-      file >> params;
+    json params;
+    file >> params;
 
-      double wheel_radius, track_width;
-      if (params.contains("wheel_radius") && 
-          params.contains("track_width")) {
-          wheel_radius = params["wheel_radius"];
-          track_width = params["track_width"];
-      }
+    double wheel_radius, track_width;
+    if (params.contains("wheel_radius") && 
+      params.contains("track_width")) {
+      wheel_radius = params["wheel_radius"];
+      track_width = params["track_width"];
+    }
 
   } catch (const std::exception& e) {
-      std::cerr << "Error parsing JSON: " << e.what() << std::endl;
-      return 1;
+    std::cerr << "Error parsing JSON: " << e.what() << std::endl;
+    return 1;
   }
 
   // Let the robot goes in a circle
@@ -66,7 +66,7 @@ int main() {
     T = T * T_prime;
 
     std::pair<double, double> rob_pos = T.GetTransPair();
-    std::cout << "current robot pos " << rob_pos.first << " " << rob_pos.second << std::endl;
+    // std::cout << "current robot pos " << rob_pos.first << " " << rob_pos.second << std::endl;
 
     robot_positions.push_back(T.GetTransPair());
   }

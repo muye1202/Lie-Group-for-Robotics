@@ -1,7 +1,7 @@
 #include <Eigen/Dense>
-#include "se3.h"
-#include "so3.h"
-#include "uncertainty.h"
+#include "lie_lib/se3.h"
+#include "lie_lib/so3.h"
+#include "lie_lib/uncertainty.h"
 
 
 Eigen::Matrix3d Lie_Estimation::bracket_single(Eigen::Matrix3d A) {

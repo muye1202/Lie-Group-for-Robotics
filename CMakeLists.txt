@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Set the project name and C++ standard
-project(test VERSION 1.0 LANGUAGES CXX)
+project(lie_lib VERSION 1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -13,32 +13,29 @@ find_package(nlohmann_json REQUIRED)
 # Add your source files and header files
 set(SOURCES
     diffdrive_example/odom.cpp
-    lie_group/so3.cpp
-    lie_group/se3.cpp
-    lie_group/so2.cpp
-    lie_group/se2.cpp
-    lie_kinematics/kinematics.cpp
-    lie_random/uncertainty.cpp
+    src/lie_group/so3.cpp
+    src/lie_group/se3.cpp
+    src/lie_group/so2.cpp
+    src/lie_group/se2.cpp
+    src/lie_kinematics/kinematics.cpp
+    src/lie_random/uncertainty.cpp
 )
 
-set(HEADERS
-    lie_group/so2.h
-    lie_group/se2.h
-    lie_group/so3.h
-    lie_group/se3.h
-    lie_kinematics/kinematics.h
-    lie_random/uncertainty.h
-)
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
-include_directories(
-  ${CMAKE_SOURCE_DIR}/lie_group
-  ${CMAKE_SOURCE_DIR}/lie_kinematics
-  ${CMAKE_SOURCE_DIR}/lie_random
-  ${CMAKE_SOURCE_DIR}/diffdrive_example
-)
+# Add demo executable
+add_executable(demo_lie_lib diffdrive_example/odom.cpp)
+target_link_libraries(demo_lie_lib PRIVATE 
+                      ${PROJECT_NAME} 
+                      Eigen3::Eigen 
+                      nlohmann_json::nlohmann_json)
 
-# Create the executable
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
+
+target_include_directories(${PROJECT_NAME}
+  PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:include>
+)
 
 # Link Eigen to the project
 target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen nlohmann_json::nlohmann_json)
@@ -48,3 +45,31 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE DEBUG_MODE)
 
 # Optionally, set compiler flags
 target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic)
+
+# Installation rules
+install(TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}Targets
+  LIBRARY DESTINATION lib
+)
+
+install(DIRECTORY include/lie_lib DESTINATION include)
+
+include(CMakePackageConfigHelpers)
+
+install(EXPORT ${PROJECT_NAME}Targets
+  FILE ${PROJECT_NAME}Targets.cmake
+  NAMESPACE ${PROJECT_NAME}::
+  DESTINATION lib/cmake/${PROJECT_NAME}
+)
+
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY AnyNewerVersion
+)
+
+install(FILES
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+  DESTINATION lib/cmake/${PROJECT_NAME}
+)

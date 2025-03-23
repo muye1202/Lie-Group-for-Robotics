@@ -2,7 +2,7 @@
 #define KINEMATICS_H
 
 #include <Eigen/Dense>
-#include "se3.h"
+#include "lie_lib/se3.h"
 #include "so3.h"
 
 

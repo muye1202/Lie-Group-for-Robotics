@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <Eigen/Dense>
-#include "so2.h"
+#include "lie_lib/so2.h"
 
 
 namespace SE2 {

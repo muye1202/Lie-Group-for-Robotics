@@ -1,4 +1,4 @@
-#include "so3.h"
+#include "lie_lib/so3.h"
 #include <cmath>
 #include <stdexcept>
 #include <Eigen/Dense>

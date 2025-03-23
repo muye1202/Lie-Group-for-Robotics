@@ -1,6 +1,6 @@
-#include "kinematics.h"
-#include "so3.h"
-#include "se3.h"
+#include "lie_lib/kinematics.h"
+#include "lie_lib/so3.h"
+#include "lie_lib/se3.h"
 
 
 Eigen::Matrix3d LieKin::dRdt(Eigen::Vector3d ang_vel, SO3::Rotation R) {

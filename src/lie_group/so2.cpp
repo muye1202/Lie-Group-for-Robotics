@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <Eigen/Dense>
-#include "so2.h"
+#include "lie_lib/so2.h"
 
 
 double SO2::unhat(Eigen::Matrix2d theta_hat) {
