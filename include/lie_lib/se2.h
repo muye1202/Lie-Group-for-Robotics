@@ -2,6 +2,7 @@
 #define SE2_H
 
 #include <iostream>
+#include <cmath>
 #include <Eigen/Dense>
 #include "lie_lib/so2.h"
 
@@ -38,6 +39,8 @@ namespace SE2 {
       Eigen::Matrix2d GetRotation() {return _R;}
 
       Eigen::Vector2d GetTranslation() {return _t;}
+
+      double GetAngle() {return std::acos(_R(0,0));}
 
       std::pair<double, double> GetTransPair() { return std::make_pair(_t.x(), _t.y());}
 

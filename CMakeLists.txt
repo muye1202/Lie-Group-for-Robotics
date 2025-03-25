@@ -56,6 +56,14 @@ install(DIRECTORY include/lie_lib DESTINATION include)
 
 include(CMakePackageConfigHelpers)
 
+# Configure the config file from the template, replacing placeholders.
+configure_package_config_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/lie_libConfig.cmake.in"
+  "${CMAKE_CURRENT_BINARY_DIR}/lie_libConfig.cmake"
+  INSTALL_DESTINATION lib/cmake/${PROJECT_NAME}
+  NO_SET_AND_CHECK_MACRO
+)
+
 install(EXPORT ${PROJECT_NAME}Targets
   FILE ${PROJECT_NAME}Targets.cmake
   NAMESPACE ${PROJECT_NAME}::
@@ -69,7 +77,7 @@ write_basic_package_version_file(
 )
 
 install(FILES
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake"
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
   "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
   DESTINATION lib/cmake/${PROJECT_NAME}
 )
