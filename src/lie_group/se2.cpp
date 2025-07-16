@@ -75,6 +75,16 @@ Eigen::Matrix3d SE2::Pose::inverse() {
 }
 
 
+Eigen::Matrix3d SE2::Pose::adjoint() {
+
+  Eigen::Matrix3d T = Eigen::Matrix3d::Identity(3, 3);
+  T.block(0, 0, 2, 2) = _R;
+  T.block(0, 2, 2, 1) = -1 * SO2::skewSymmetric(1.0) * _t;
+
+  return T;
+}
+
+
 SE2::Pose SE2::Pose::operator*(Pose& other) {
 
   Eigen::Matrix3d T = Eigen::Matrix3d::Identity(3,3);

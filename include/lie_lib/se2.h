@@ -34,6 +34,13 @@ namespace SE2 {
 
       Eigen::Matrix3d inverse();
 
+      /**
+       * @brief From Micro Lie-theory (159)
+       * 
+       * @return Eigen::Matrix3d 
+       */
+      Eigen::Matrix3d adjoint();
+
       Eigen::Matrix3d GetPose() {return _pose;}
 
       Eigen::Matrix2d GetRotation() {return _R;}
