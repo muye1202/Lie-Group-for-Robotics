@@ -2,6 +2,8 @@
 
 This repository provides a small C++ library implementing Lie group and Lie algebra utilities commonly used in robotics. The library comes with a simple differential drive example demonstrating how the components fit together.
 
+Please feel free to report any bugs and suggest improvements!
+
 ## Requirements
 
 - C++17 compatible compiler (e.g. `g++`)
